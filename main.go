@@ -13,7 +13,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"go-avatar/internal/api"
 	"go-avatar/internal/defaults"
 
 	"github.com/disintegration/imaging"
@@ -255,8 +254,6 @@ func main() {
 	r.HandleFunc("/", IndexHandler)
 	r.HandleFunc("/avatar", AvatarHandler).Methods("GET")
 
-	//r.HandleFunc("/avatar", AvatarHandler).Methods("POST")
-	r.HandleFunc("/api/v1/avatar", api.GetAvatar)
 	// Serve static files
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("/app/static"))))
 
