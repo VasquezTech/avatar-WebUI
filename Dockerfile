@@ -11,8 +11,8 @@ COPY . /app
 RUN go mod tidy && go build -o /app/go-avatar
 RUN chmod +x go-avatar
 
-# Expose port 8080 to the outside world
-EXPOSE 80
+# Expose port 8050 to the outside world
+EXPOSE 8050
 
 # Command to run the executable
 CMD ["/app/go-avatar"]
