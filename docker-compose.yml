@@ -3,10 +3,5 @@ version: '3'
 services:
   avatarui:
     image:  docker.io/mrvasquez96/avatar-ui
-    build:
-      context: .
-      dockerfile: Dockerfile
     ports:
       - "8055:8050"
-    volumes:
-      - ./output:/app

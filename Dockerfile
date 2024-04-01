@@ -1,12 +1,14 @@
 FROM golang:latest
 
 RUN apt install make
-
+RUN mkdir /tmp/build
+RUN mkdir /app
 WORKDIR /tmp/build
-
 COPY . .
-RUN make docker
-COPY ./output /app
+RUN make
+RUN go mod tidy 
+RUN go build -o output/go-avatar
+COPY output/* /app
 
 WORKDIR /app
 

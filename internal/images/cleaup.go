@@ -108,7 +108,7 @@ func CleanupIMG(bodyImg, traitImg string) error {
 
 			// If pixels are not identical, keep the pixel from the first image
 			if pixel1 != pixel2 {
-				result.Set(x, y, pixel1)
+				result.Set(x, y, pixel2)
 				//	results = append(results, *result)
 			}
 		}

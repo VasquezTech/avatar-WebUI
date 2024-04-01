@@ -1,12 +1,10 @@
 # Variables
-IMAGE_NAME := mrvasquez96/avatar-ui:latest
+IMAGE_NAME := mrvasquez96/avatar-ui
 DOCKERFILE := ./Dockerfile
 GO_BINARY := go-avatar
 DOCKER_BUILD := docker build -t $(IMAGE_NAME) -f $(DOCKERFILE) .
  
-.PHONY: build
-build clean vue go: 
-
+.PHONY: clean vue go
 # Output
 clean: 
 	rm -rf output && mkdir output
@@ -21,12 +19,14 @@ vue:
 
 # Docker
 docker-build:
-	docker build -t $(IMAGE_NAME) -f $(DOCKERFILE) .
+	docker build -t mrvasquez96/avatar-ui -f $(DOCKERFILE) .
 docker-up: 
 	docker-compose up -d $(IMAGE_NAME)
 
 
-docker: build
+
+docker: clean vue go
+# cp -r /tmp/build/output /app
 
 re: clean go 
 	cd output && ./go-avatar

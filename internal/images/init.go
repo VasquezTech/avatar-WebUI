@@ -80,7 +80,7 @@ func Init() {
 			for _, file := range files {
 				p1 := "./files/Body/0_thumbnail.png"
 				p2 := filepath.Join("./files", folder.Name(), file.Name())
-				CleanupIMG(p2, p1)
+				CleanupIMG(p1, p2)
 			}
 		}
 	}
