@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  avatarui:
+    image:  docker.io/library/avatarui 
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8065:80"
+    volumes:
+      - .:/app

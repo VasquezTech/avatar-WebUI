@@ -221,7 +221,12 @@ func SaveImage(buffer *bytes.Buffer, filename string) error {
 
 // IndexHandler handles the root route
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "index.html")
+	_, err := os.ReadFile("./index.html")
+	if err != nil {
+		fmt.Println(err)
+		log.Fatal(err)
+	}
+	http.ServeFile(w, r, "./index.html")
 }
 
 // AvatarHandler generates and serves the avatar image
@@ -253,9 +258,13 @@ func main() {
 	//r.HandleFunc("/avatar", AvatarHandler).Methods("POST")
 	r.HandleFunc("/api/v1/avatar", api.GetAvatar)
 	// Serve static files
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("/app/static"))))
 
 	// Start the server
-	log.Println("Server started on http://localhost:8051")
-	log.Fatal(http.ListenAndServe("localhost:8051", r))
+	log.Println("Server started on http://localhost:80")
+
+	f, err := os.ReadDir(".")
+	log.Println("err:", err)
+	log.Println("files:", f)
+	log.Fatal(http.ListenAndServe(":80", r))
 }
