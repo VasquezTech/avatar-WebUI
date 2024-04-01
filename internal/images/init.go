@@ -10,10 +10,10 @@ import (
 func Init() {
 
 	flush.TmpFolder = "./tmp/"
-	firstRun, err := os.ReadFile(".hasRun")
+	firstRun, err := os.ReadFile("hasRun")
 	if err != nil {
-		if fmt.Sprint(err) == "open .hasRun: no such file or directory" {
-			os.WriteFile(".hasRun", []byte("false"), 0777)
+		if fmt.Sprint(err) == "open hasRun: no such file or directory" {
+			os.WriteFile("hasRun", []byte("false"), 0777)
 			Init()
 			return
 		}
@@ -68,7 +68,7 @@ func Init() {
 		MoveDir("./tmp/minipix/clothing", "./files")
 
 		os.RemoveAll("./tmp")
-		os.WriteFile(".hasRun", []byte("true"), 0755)
+		os.WriteFile("hasRun", []byte("true"), 0755)
 
 		// Try to eclude any body from traits
 		folders, _ := os.ReadDir("./files")

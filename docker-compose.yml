@@ -2,7 +2,7 @@ version: '3'
 
 services:
   avatarui:
-    image:  avatar-ui:latest
+    image:  docker.io/mrvasquez96/avatar-ui
     build:
       context: .
       dockerfile: Dockerfile

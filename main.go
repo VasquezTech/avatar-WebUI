@@ -1,6 +1,8 @@
 package main
 
 import (
+	"embed"
+	"io/fs"
 	"log"
 	"net/http"
 
@@ -13,14 +15,24 @@ import (
 func init() {
 	images.Init()
 }
+
+//go:embed static/dist
+var app embed.FS
+
 func main() {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/", handlers.IndexHandler)
+	dist, err := fs.Sub(app, "static/dist")
+	if err != nil {
+		log.Fatalf("sub error")
+		return
+	}
+	r.Handle("/", http.FileServer(http.FS(dist)))
+	//	r.HandleFunc("/", handlers.IndexHandler)
 	r.HandleFunc("/avatar", handlers.AvatarHandler).Methods("GET")
 
-	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("/app/static"))))
+	//r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("/app/static"))))
 
-	log.Println("Server started on http://localhost:8050")
-	log.Fatal(http.ListenAndServe(":8050", r))
+	log.Println("Server started on http://localhost:8055")
+	log.Fatal(http.ListenAndServe(":8055", r))
 }

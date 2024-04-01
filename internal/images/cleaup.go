@@ -4,10 +4,18 @@ import (
 	"fmt"
 	"image"
 	"image/png"
+	"io/fs"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 )
+
+type Folder struct {
+	F fs.File
+}
+
+var Dist fs.FS
+var Static Folder
 
 func MoveDir(sourceDir, destinationDir string) error {
 	// Get the list of files and subdirectories in the source directory

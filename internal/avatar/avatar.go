@@ -70,7 +70,6 @@ func GenerateRandomPersonTraits() []string {
 		if trait.Name == "Eyes" || trait.Name == "Body" {
 			count := 0
 			for {
-				fmt.Println("for")
 				includeTrait = rand.Intn(4) == 0 // 50% chance to include trait
 
 				if includeTrait {
@@ -147,6 +146,7 @@ func loadImage(path string) (image.Image, error) {
 // getFiles retrieves a list of files in the specified directory
 func getFiles(dir string) []string {
 	var files []string
+
 	filepath.Walk("./files"+dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			if os.IsNotExist(err) {
@@ -160,11 +160,9 @@ func getFiles(dir string) []string {
 
 			}
 		}
-		fmt.Println(path)
 		if info.IsDir() {
 			f, _ := os.ReadDir(filepath.Join(dir, info.Name()))
 			for _, file := range f {
-				fmt.Println(file.Name())
 				files = append(files, filepath.Join(dir, file.Name()))
 			}
 		} else {
