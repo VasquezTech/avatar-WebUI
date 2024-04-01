@@ -39,9 +39,9 @@ sudo systemctl enable containerd.service
 ```
 ### Avatar-ui startup
 ```
-make
+docker-compose build && docker-compose up -d
 ```
  
-Open `https:/localhost/8065`
+Open `https:/localhost/8055`
 
 #### Avatar traits collected from: https://www.avatarsinpixels.com/

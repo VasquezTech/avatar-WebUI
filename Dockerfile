@@ -1,6 +1,8 @@
 # Start from a Go runtime image
 FROM golang:latest
 
+RUN apt install make
+
 # Set the Current Working Directory inside the container
 WORKDIR /app
 
@@ -8,8 +10,8 @@ WORKDIR /app
 COPY . /app
 
 # Build the Go app
-RUN go mod tidy && go build -o /app/go-avatar
-RUN chmod +x go-avatar
+RUN make
+WORKDIR /app
 
 # Expose port 8050 to the outside world
 EXPOSE 8050
