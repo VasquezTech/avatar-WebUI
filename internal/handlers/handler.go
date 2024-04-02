@@ -17,7 +17,7 @@ func AvatarHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	api_var := fmt.Sprint(r.URL)[len("/avatar?username="):]
-	fmt.Println("api", api_var)
+	//fmt.Println("api", api_var)
 	strings.Replace(fmt.Sprint(r.URL), api_var, "", 1)
 	out, err := avatar.GenerateAvatar(api_var)
 	if err != nil {

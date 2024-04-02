@@ -120,7 +120,9 @@ func CleanupIMG(bodyImg, traitImg string) error {
 func saveResult(traitImg string, result *image.RGBA) {
 
 	// Save the result to a new image file
-	os.Remove(traitImg)
+	//os.Remove(traitImg)
+	//traitImg = strings.Replace(traitImg, ".png", "_cleared.png", 1)
+
 	outFile, err := os.Create(traitImg)
 	if err != nil {
 		fmt.Println("Error:", err)

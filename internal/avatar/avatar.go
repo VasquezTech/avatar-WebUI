@@ -53,7 +53,6 @@ func GenerateRandomPersonTraits(seed string) []string {
 		{"Top", getFiles("/Top")},
 	}
 	rand.Seed(hash(seed))
-	fmt.Println(seed)
 	selectedTraits := []string{}
 
 	shuffledTraits := make([]Trait, len(traits))
@@ -127,9 +126,9 @@ func DrawTrait(baseImg *image.RGBA, traitsvalues []string) {
 		}
 
 		traitImg = resize.Resize(256, 256, traitImg, resize.Bicubic)
-		sharpenedImage := imaging.Sharpen(traitImg, 5)
+		AdjustBrightness := imaging.AdjustBrightness(traitImg, 0)
 
-		draw.Draw(mergedImg, traitImg.Bounds().Add(image.Pt(0, 0)), sharpenedImage, image.Point{}, draw.Over)
+		draw.Draw(mergedImg, traitImg.Bounds().Add(image.Pt(0, 0)), AdjustBrightness, image.Point{}, draw.Over)
 	}
 
 	draw.Draw(baseImg, baseImg.Bounds(), mergedImg, image.Point{}, draw.Over)
@@ -144,6 +143,7 @@ func loadImage(path string) (image.Image, error) {
 
 	img, _, err := image.Decode(file)
 	if err != nil {
+
 		return nil, err
 	}
 
@@ -181,7 +181,7 @@ func getFiles(dir string) []string {
 		}
 		return nil
 	})
-	fmt.Println(files)
+
 	return files
 }
 func random() string {
