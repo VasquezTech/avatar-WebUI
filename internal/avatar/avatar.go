@@ -2,6 +2,7 @@ package avatar
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"image"
 	"image/draw"
@@ -22,7 +23,14 @@ type Trait struct {
 	Values []string
 }
 
-func GenerateRandomPersonTraits() []string {
+func hash(s string) int64 {
+	var h uint32
+	for _, c := range s {
+		h = 32*h + uint32(c)
+	}
+	return int64(h)
+}
+func GenerateRandomPersonTraits(seed string) []string {
 	// Available traits
 	var traits = []Trait{
 		{"Body", getFiles("/Body")},
@@ -44,8 +52,7 @@ func GenerateRandomPersonTraits() []string {
 		{"Glasses", getFiles("/Glasses")},
 		{"Top", getFiles("/Top")},
 	}
-
-	rand.Seed(time.Now().UnixNano())
+	rand.Seed(hash(seed))
 
 	selectedTraits := []string{}
 
@@ -62,29 +69,13 @@ func GenerateRandomPersonTraits() []string {
 			fmt.Println("traits[i].Values is zero!\n", traits[i])
 			return []string{}
 		}
-		if trait.Name == "Hat" || trait.Name == "Hair" || trait.Name == "Eyes" {
-			continue
-		}
-
 		includeTrait := rand.Intn(3) == 0 // 33% chance to include trait
-		if trait.Name == "Eyes" || trait.Name == "Body" {
-			count := 0
-			for {
-				includeTrait = rand.Intn(4) == 0 // 50% chance to include trait
+		if trait.Name == "Hat" || trait.Name == "Hair" {
+			continue
+		} else if trait.Name == "Eyes" || trait.Name == "Body" {
+			selectedTraits, selectedTrait, traits, trait = checkSpecial(i, selectedTrait, selectedTraits, includeTrait, traits, trait)
 
-				if includeTrait {
-					count++
-					rnd := rand.Intn(len(traits[i].Values))
-					selectedTrait = traits[i].Values[rnd]
-					selectedTraits = append(selectedTraits, trait.Values[rand.Intn(len(trait.Values))])
-
-				}
-				if count == 2 {
-					break
-				}
-			}
-		}
-		if includeTrait || trait.Name == "body" {
+		} else if includeTrait {
 			rnd := rand.Intn(len(traits[i].Values))
 			selectedTrait = traits[i].Values[rnd]
 			selectedTraits = append(selectedTraits, selectedTrait)
@@ -104,7 +95,23 @@ func GenerateRandomPersonTraits() []string {
 	}
 	return selectedTraits
 }
+func checkSpecial(i int, selectedTrait string, selectedTraits []string, includeTrait bool, traits []Trait, trait Trait) ([]string, string, []Trait, Trait) {
+	count := 0
+	for {
+		includeTrait = rand.Intn(4) == 0 // 50% chance to include trait
+		if includeTrait {
+			count++
+			rnd := rand.Intn(len(traits[i].Values))
+			selectedTrait = traits[i].Values[rnd]
+			selectedTraits = append(selectedTraits, trait.Values[rand.Intn(len(trait.Values))])
 
+		}
+		if count == 1 {
+			break
+		}
+	}
+	return selectedTraits, selectedTrait, traits, trait
+}
 func DrawTrait(baseImg *image.RGBA, traitsvalues []string) {
 	mergedImg := image.NewRGBA(baseImg.Bounds())
 
@@ -174,14 +181,36 @@ func getFiles(dir string) []string {
 
 	return files
 }
+func random() string {
+
+	length := 10
+
+	// Generate random bytes
+	randomBytes := make([]byte, length)
+	_, err := rand.Read(randomBytes)
+	if err != nil {
+		panic(err)
+	}
+
+	// Encode random bytes to a string
+	randomString := base64.URLEncoding.EncodeToString(randomBytes)
+
+	// Trim padding characters if any
+	randomString = randomString[:length]
+	return randomString
+
+}
 
 // GenerateAvatar generates an avatar of a person with random traits
-func GenerateAvatar() (*bytes.Buffer, error) {
+func GenerateAvatar(api_var string) (*bytes.Buffer, error) {
 	// Initialize random seed
 	rand.Seed(time.Now().UnixNano())
 	fmt.Println("Generating avatar..")
 	// Generate random person traits
-	new_traits := GenerateRandomPersonTraits()
+	if api_var == "random" {
+		api_var = random()
+	}
+	new_traits := GenerateRandomPersonTraits(api_var)
 	img := image.NewRGBA(image.Rect(0, 0, 256, 256))
 	DrawTrait(img, new_traits)
 

@@ -10,6 +10,11 @@ import (
 func Init() {
 
 	flush.TmpFolder = "./tmp/"
+	flush.StaticFiles = flush.TmpFolder // "./static/dist/files"
+	_, err := os.Stat(flush.StaticFiles)
+	if os.IsNotExist(err) {
+		os.MkdirAll(flush.StaticFiles, 0755)
+	}
 	firstRun, err := os.ReadFile("hasRun")
 	if err != nil {
 		if fmt.Sprint(err) == "open hasRun: no such file or directory" {
@@ -61,11 +66,10 @@ func Init() {
 			tmp.Urls = append(tmp.Urls, urls[i])
 			tmp = tmp.Set_urls("img src=\"/minipix", "src=\"", "\"")
 			tmp = tmp.Set_pwds()
-			fmt.Println("Downloading images..")
 			tmp.DownloadImage(url, "")
 		}
 		fmt.Println("Removing temporary files..")
-		MoveDir("./tmp/minipix/clothing", "./files")
+		MoveDir("./tmp/minipix/clothing", tmp.StaticFiles)
 
 		os.RemoveAll("./tmp")
 		os.WriteFile("hasRun", []byte("true"), 0755)

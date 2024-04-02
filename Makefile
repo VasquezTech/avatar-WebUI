@@ -1,32 +1,38 @@
 # Variables
-IMAGE_NAME := mrvasquez96/avatar-ui
+IMAGE_NAME := avatar-ui:v0.0.2
 DOCKERFILE := ./Dockerfile
-GO_BINARY := go-avatar
 DOCKER_BUILD := docker build -t $(IMAGE_NAME) -f $(DOCKERFILE) .
- 
-.PHONY: clean vue go
+
+VUE_FILES := ./static/public/
+FRONTEND := index.html
+
+OUTPUT_DIR := output/
+GO_PWD := $(OUTPUT_DIR)go-avatar # Build
+GO_BINARY:=go-avatar # Startup
+
 # Output
-clean: 
-	rm -rf output && mkdir output
+clean:  
+	rm -rf $(OUTPUT_DIR) && mkdir output
+vue:
+	cp ./$(FRONTEND) $(VUE_FILES)
+	cd static && npm run build
+
+vue-install:
+	cd static && npm install && npm run build
+	cp ./$(FRONTEND) $(VUE_FILES)
+
 # Golang
 go:
-	go mod tidy && go build -o output/$(GO_BINARY)
-	chmod +x  output/$(GO_BINARY)
-
-vue:
-	cd static && npm run build
+	go mod tidy && go build -o $(GO_PWD)
+	chmod +x $(GO_PWD)
 # cp index.html output
 
 # Docker
-docker-build:
-	docker build -t mrvasquez96/avatar-ui -f $(DOCKERFILE) .
-docker-up: 
+build:
+	docker build -t $(IMAGE_NAME) -f $(DOCKERFILE) . 
 	docker-compose up -d $(IMAGE_NAME)
 
-
-
-docker: clean vue go
-# cp -r /tmp/build/output /app
-
-re: clean go 
-	cd output && ./go-avatar
+re: clean vue-install go 
+	cd $(OUTPUT_DIR) && ./$(GO_BINARY)
+run: go
+	cd $(OUTPUT_DIR) && ./$(GO_BINARY)
