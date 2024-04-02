@@ -10,10 +10,11 @@ import (
 func Init() {
 
 	flush.TmpFolder = "./tmp/"
-	flush.StaticFiles = flush.TmpFolder // "./static/dist/files"
-	_, err := os.Stat(flush.StaticFiles)
+	flush.OutFolder = "./files/"
+	//flush.TmpFolder = flush.TmpFolder // "./static/dist/files"
+	_, err := os.Stat(flush.TmpFolder)
 	if os.IsNotExist(err) {
-		os.MkdirAll(flush.StaticFiles, 0755)
+		os.MkdirAll(flush.TmpFolder, 0755)
 	}
 	firstRun, err := os.ReadFile("hasRun")
 	if err != nil {
@@ -69,21 +70,23 @@ func Init() {
 			tmp.DownloadImage(url, "")
 		}
 		fmt.Println("Removing temporary files..")
-		MoveDir("./tmp/minipix/clothing", tmp.StaticFiles)
-
+		err = MoveDir("./tmp/minipix/clothing", tmp.OutFolder)
+		if err != nil {
+			log.Println(err)
+		}
 		os.RemoveAll("./tmp")
 		os.WriteFile("hasRun", []byte("true"), 0755)
 
 		// Try to eclude any body from traits
-		folders, _ := os.ReadDir("./files")
+		folders, _ := os.ReadDir(tmp.OutFolder)
 		for _, folder := range folders {
 			if !folder.IsDir() || folder.Name() == "Body" {
 				continue
 			}
-			files, _ := os.ReadDir("./files/" + folder.Name()) //Body/0_thumbnail.png")
+			files, _ := os.ReadDir(tmp.OutFolder + "/" + folder.Name()) //Body/0_thumbnail.png")
 			for _, file := range files {
-				p1 := "./files/Body/0_thumbnail.png"
-				p2 := filepath.Join("./files", folder.Name(), file.Name())
+				p1 := fmt.Sprintf("./%s/Body/0_thumbnail.png", tmp.OutFolder)
+				p2 := filepath.Join(tmp.OutFolder, folder.Name(), file.Name())
 				CleanupIMG(p1, p2)
 			}
 		}

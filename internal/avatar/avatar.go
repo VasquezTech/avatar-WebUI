@@ -53,7 +53,7 @@ func GenerateRandomPersonTraits(seed string) []string {
 		{"Top", getFiles("/Top")},
 	}
 	rand.Seed(hash(seed))
-
+	fmt.Println(seed)
 	selectedTraits := []string{}
 
 	shuffledTraits := make([]Trait, len(traits))
@@ -153,15 +153,18 @@ func loadImage(path string) (image.Image, error) {
 // getFiles retrieves a list of files in the specified directory
 func getFiles(dir string) []string {
 	var files []string
-
+	fmt.Println("Getting traits..")
 	filepath.Walk("./files"+dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			if os.IsNotExist(err) {
 				err := os.MkdirAll("./files/"+dir, 0755)
 				if err != nil {
+					fmt.Println(err)
 					getFiles(dir)
+					fmt.Println(err)
 					return err
 				}
+				fmt.Println(err)
 				getFiles(dir)
 				return err
 
@@ -178,7 +181,7 @@ func getFiles(dir string) []string {
 		}
 		return nil
 	})
-
+	fmt.Println(files)
 	return files
 }
 func random() string {

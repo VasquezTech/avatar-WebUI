@@ -26,7 +26,7 @@ func Get(url string) string {
 
 type Files struct {
 	TmpFolder    string
-	StaticFiles  string
+	OutFolder    string
 	Current_html string
 	Pwds         []string
 	TmpFolders   []string
@@ -58,17 +58,17 @@ func (F Files) DownloadFile(url, ext string) Files {
 
 			file = filepath.Join(folder, file)
 		} else {
-			if len(F.StaticFiles) > 0 {
+			if len(F.TmpFolder) > 0 {
 
 				// fmt.Println("file", true)
-				file = F.StaticFiles + u + ext
+				file = F.TmpFolder + u + ext
 			}
 		}
 		// fmt.Println("file", file)
 		if strings.Contains(file, ".png") {
 
 			// fmt.Println("file", false)
-			file = F.StaticFiles + "minipix/clothing" + file
+			file = F.TmpFolder + "minipix/clothing" + file
 		}
 		// fmt.Println("Saving to:", file)
 		_, err := os.Create(file)
@@ -114,14 +114,14 @@ func (F Files) DownloadImage(url, ext string) Files {
 			if len(F.TmpFolders) > 0 {
 
 				// fmt.Println("file", true)
-				file = F.StaticFiles + u + ext
+				file = F.TmpFolder + u + ext
 			}
 		}
 		// fmt.Println("file", file)
 		if strings.Contains(file, ".png") {
 
 			// fmt.Println("file", false)
-			file = F.StaticFiles + "minipix/clothing" + file
+			file = F.TmpFolder + "minipix/clothing" + file
 		}
 		// fmt.Println("Saving to:", file)
 		_, err := os.Create(file)

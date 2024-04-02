@@ -28,7 +28,7 @@ func MoveDir(sourceDir, destinationDir string) error {
 	if err := os.MkdirAll(destinationDir, 0755); err != nil {
 		return err
 	}
-
+	fmt.Println(len(files))
 	// Move each file and subdirectory to the destination directory
 	for _, file := range files {
 		sourcePath := filepath.Join(sourceDir, file.Name())
@@ -41,8 +41,9 @@ func MoveDir(sourceDir, destinationDir string) error {
 			}
 		} else {
 			// Move the file
+			fmt.Println("Moving files", sourcePath, destinationPath)
 			if err := os.Rename(sourcePath, destinationPath); err != nil {
-				//if err := CleanupIMG(sourcePath, destinationPath); err != nil {
+				//	if err := CleanupIMG(sourcePath, destinationPath); err != nil {
 				fmt.Println(err)
 				return err
 			}
