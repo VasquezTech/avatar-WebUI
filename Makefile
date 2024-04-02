@@ -1,5 +1,6 @@
 # Variables
-IMAGE_NAME := avatar-ui
+IMAGE_NAME := docker.io/mrvasquez96/avatar-ui
+SERVICE_NAME := avatar-ui
 DOCKERFILE := ./Dockerfile
 GIT_COMMIT := $(shell git rev-parse HEAD)
 VUE_FILES := ./static/public/
@@ -31,7 +32,7 @@ go:
 # Docker
 build:
 	docker build -t $(IMAGE_NAME) -f $(DOCKERFILE) . 
-	docker-compose up -d $(IMAGE_NAME)
+	docker-compose up -d $(SERVICE_NAME)
 
 re: clean vue-install go 
 	cd $(OUTPUT_DIR) && ./$(GO_BINARY)
