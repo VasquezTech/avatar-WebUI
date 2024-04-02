@@ -1,7 +1,9 @@
 version: '3'
 
 services:
-  avatarui:
+  avatar-ui:
     image:  docker.io/mrvasquez96/avatar-ui
     ports:
-      - "8055:8050"
+      - "8055:8055"
+    volumes:
+    - ./output/:/app

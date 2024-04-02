@@ -1,8 +1,7 @@
 # Variables
-IMAGE_NAME := avatar-ui:v0.0.2
+IMAGE_NAME := avatar-ui
 DOCKERFILE := ./Dockerfile
-DOCKER_BUILD := docker build -t $(IMAGE_NAME) -f $(DOCKERFILE) .
-
+GIT_COMMIT := $(shell git rev-parse HEAD)
 VUE_FILES := ./static/public/
 FRONTEND := index.html
 
@@ -13,6 +12,7 @@ GO_BINARY:=go-avatar # Startup
 # Output
 clean:  
 	rm -rf $(OUTPUT_DIR) && mkdir output
+
 vue:
 	cp ./$(FRONTEND) $(VUE_FILES)
 	cd static && npm run build
@@ -23,9 +23,10 @@ vue-install:
 
 # Golang
 go:
-	go mod tidy && go build -o $(GO_PWD)
+	export GIT_COMMIT=$(shell git rev-parse HEAD) && \
+	go mod tidy && \
+	go build -ldflags "-X main.gitCommit=$(shell git rev-parse HEAD)" -o $(GO_PWD)
 	chmod +x $(GO_PWD)
-# cp index.html output
 
 # Docker
 build:
