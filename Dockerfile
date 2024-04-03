@@ -1,6 +1,9 @@
 # Use the official Golang image as a base
 FROM golang:latest AS builder
 
+RUN apt update && \
+    apt install -y nodejs npm
+
 WORKDIR /app
 
 COPY go.mod ./
@@ -10,6 +13,7 @@ RUN go mod download
 
 COPY . .
 
+RUN cd static && npm install && npm run build
 RUN CGO_ENABLED=0 GOOS=linux go build -o serve/go-avatar .
 
 FROM alpine:latest  
