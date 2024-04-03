@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
+	"go-avatar/internal/images"
 	"image"
 	"image/draw"
 	"image/png"
@@ -62,18 +63,43 @@ func GenerateRandomPersonTraits(seed string) []string {
 		shuffledTraits[i], shuffledTraits[j] = shuffledTraits[j], shuffledTraits[i]
 	})
 
+	var selectedTrait string
+	for i, trait := range traits {
+
+		includeTrait := false
+		if trait.Name == "Body" {
+			count := 0
+			for {
+				includeTrait = rand.Intn(10) == 0
+				if includeTrait {
+					count++
+					rnd := rand.Intn(len(traits[i].Values))
+					selectedTrait = traits[i].Values[rnd]
+					selectedTraits = append(selectedTraits, selectedTrait)
+
+				}
+				if count == 1 {
+					break
+				}
+			}
+		}
+	}
 	for i, trait := range shuffledTraits {
-		var selectedTrait string
 		if len(traits[i].Values) == 0 {
 			fmt.Println("traits[i].Values is zero!\n", traits[i])
+
+			images.Init()
 			return []string{}
 		}
-		includeTrait := rand.Intn(3) == 0 // 33% chance to include trait
-		if trait.Name == "Hat" || trait.Name == "Hair" {
+		includeTrait := rand.Intn(2) == 0 // 33% chance to include trait
+		if trait.Name == "Hat" ||
+			trait.Name == "Hair" ||
+			trait.Name == "CapeBack" ||
+			trait.Name == "Wings" ||
+			trait.Name == "Cape" ||
+			trait.Name == "Body" ||
+			trait.Name == "Eyes" {
 			continue
-		} else if trait.Name == "Eyes" || trait.Name == "Body" {
-			selectedTraits, selectedTrait, traits, trait = checkSpecial(i, selectedTrait, selectedTraits, includeTrait, traits, trait)
-
 		} else if includeTrait {
 			rnd := rand.Intn(len(traits[i].Values))
 			selectedTrait = traits[i].Values[rnd]
@@ -81,35 +107,38 @@ func GenerateRandomPersonTraits(seed string) []string {
 		}
 	}
 
-	for _, trait := range traits {
-		if trait.Name == "Hat" || trait.Name == "Hair" {
-			includeTrait := false
+	for i, trait := range traits {
 
-			includeTrait = rand.Intn(4) == 0 // 50% chance to include trait
+		includeTrait := false
+		if trait.Name == "Hat" ||
+			trait.Name == "CapeBack" ||
+			trait.Name == "Wings" ||
+			trait.Name == "Cape" ||
+			trait.Name == "Hair" {
+
+			includeTrait = rand.Intn(10) == 0 // 50% chance to include trait
 
 			if includeTrait {
 				selectedTraits = append(selectedTraits, trait.Values[rand.Intn(len(trait.Values))])
 			}
+		} else if trait.Name == "Eyes" {
+			count := 0
+			for {
+				includeTrait = rand.Intn(10) == 0
+				if includeTrait {
+					count++
+					rnd := rand.Intn(len(traits[i].Values))
+					selectedTrait = traits[i].Values[rnd]
+					selectedTraits = append(selectedTraits, selectedTrait)
+
+				}
+				if count == 1 {
+					break
+				}
+			}
 		}
 	}
 	return selectedTraits
-}
-func checkSpecial(i int, selectedTrait string, selectedTraits []string, includeTrait bool, traits []Trait, trait Trait) ([]string, string, []Trait, Trait) {
-	count := 0
-	for {
-		includeTrait = rand.Intn(4) == 0 // 50% chance to include trait
-		if includeTrait {
-			count++
-			rnd := rand.Intn(len(traits[i].Values))
-			selectedTrait = traits[i].Values[rnd]
-			selectedTraits = append(selectedTraits, trait.Values[rand.Intn(len(trait.Values))])
-
-		}
-		if count == 1 {
-			break
-		}
-	}
-	return selectedTraits, selectedTrait, traits, trait
 }
 func DrawTrait(baseImg *image.RGBA, traitsvalues []string) {
 	mergedImg := image.NewRGBA(baseImg.Bounds())
@@ -186,7 +215,7 @@ func getFiles(dir string) []string {
 }
 func random() string {
 
-	length := 10
+	length := 20
 
 	// Generate random bytes
 	randomBytes := make([]byte, length)

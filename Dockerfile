@@ -1,20 +1,23 @@
-FROM golang:latest
-
-RUN apt install make
-RUN mkdir /tmp/build
-RUN mkdir /app
-WORKDIR /tmp/build
-COPY . .
-RUN make
-RUN export GIT_COMMIT=$(shell git rev-parse HEAD) 
-RUN go mod tidy 
-RUN go build -o output/go-avatar
-COPY output/* /app
+# Use the official Golang image as a base
+FROM golang:latest AS builder
 
 WORKDIR /app
 
-RUN rm -rf /tmp/build
+COPY go.mod ./
+COPY go.sum ./
+
+RUN go mod download
+
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux go build -o serve/go-avatar .
+
+FROM alpine:latest  
+
+RUN mkdir /app
+
+COPY --from=builder /app/serve/go-avatar /app/serve/go-avatar
 
 EXPOSE 8055
 
-CMD ["/app/go-avatar"]
+CMD ["/app/serve/go-avatar"]
