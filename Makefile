@@ -35,7 +35,7 @@ docker-build: clean
 	docker-compose up -d $(SERVICE_NAME)
 
 build-d: clean
-	docker build -t $(IMAGE_NAME):dev -f $(DOCKERFILE) . 
+	docker build -t $(IMAGE_NAME):latest -f $(DOCKERFILE) . 
 
 docker-run:
 	docker run -p 127.0.0.1:8055:8055 mrvasquez96/avatar-ui:latest
